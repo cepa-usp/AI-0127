@@ -1,5 +1,6 @@
 ﻿package  
 {
+	import com.adobe.serialization.json.JSON;
 	import cepa.utils.ToolTip;
 	import fl.motion.Motion;
 	import fl.transitions.easing.None;
@@ -13,6 +14,7 @@
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
+	import flash.external.ExternalInterface;
 	import flash.filters.GlowFilter;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -32,7 +34,6 @@
 		private var startX:Number;
 		private var startY:Number;
 		private var dict:Dictionary;
-		private var posDict:Dictionary;
 		//private var wrongAnswerSound:WrongAnswerSound = new WrongAnswerSound();
 		private var tweenX:Tween;
 		private var tweenY:Tween;
@@ -140,25 +141,17 @@
 			box1.visible = false;
 			
 			criaDict();
-			/*
-			for (var c:int = 1; c <= 9; c++) {
-				var caixa:Sprite = this["caixa" + c];
-				var bounds:Rectangle = caixa.getBounds(caixa);
-				var mascara:Shape = new Shape();
-				mascara.graphics.beginFill(0);
-				mascara.graphics.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
-				mascara.graphics.endFill();
-				caixa.mask = mascara;
-				caixa.addChild(mascara);
-			}
-			*/
 			
-			initLMSConnection();
+			if (ExternalInterface.available) {
+				initLMSConnection();
+				if (mementoSerialized != null) {
+					if(mementoSerialized != "" && mementoSerialized != "null") restoreAIStatus(null);
+				}
+			}
 		}
 		
 		function criaDict() :void {
 			dict = new Dictionary();
-			posDict = new Dictionary();
 			dict[thumbnail1] = caixa1;
 			dict[thumbnail2] = caixa2;
 			dict[thumbnail3] = caixa3;
@@ -208,11 +201,83 @@
 			for each (var caixa in caixas) dictCaixa[caixa] = null;
 		}
 		
+		private function saveAIStatus():void
+		{
+			var object:Object = new Object();
+			
+			// Transforma o Dictionary "dictImage" num Object
+			for (var i:int = 1; i <= 9; i++) 
+			{
+				var thumb:MovieClip = this["thumbnail" + String(i)];
+				if (dictImage[thumb] != null) {
+					object[thumb.name] = dictImage[thumb].name;
+				}
+				
+				var caixa:MovieClip = this["caixa" + String(i)];
+				if (dictCaixa[caixa] != null) {
+					object[caixa.name] = dictCaixa[caixa].name;
+				}
+			}
+			
+			// Transforma o Array "alvosUsados" num Object
+			var strAlvosUsados:String = "";
+			for (i = 0; i < alvosUsados.length; i++) 
+			{
+				if (i == alvosUsados.length - 1) strAlvosUsados += (alvosUsados[i].name);
+				else strAlvosUsados += (alvosUsados[i].name + ";");
+			}
+			
+			object.alvosUsados = strAlvosUsados;
+			object.movimentos = movimentos;
+			object.acertos = acertos;
+			statusAI = object;
+			mementoSerialized = JSON.encode(statusAI);
+			
+			saveStatus();
+		}
+		
+		private function restoreAIStatus(e:MouseEvent):void
+		{
+			statusAI = JSON.decode(mementoSerialized);
+			alvosUsados.splice(0);
+			
+			// Transforma o Object "statusAI" em um Dictionary
+			for (var i:int = 1; i <= 9; i++) 
+			{
+				var thumb:MovieClip = this["thumbnail" + String(i)];
+				if (statusAI[thumb.name] != null) {
+					dictImage[thumb] = this[statusAI[thumb.name]];
+					var image:MovieClip = thumbnailDict[thumb];
+					image.x = dictImage[thumb].x;
+					image.y = dictImage[thumb].y;
+					thumb.x = dictImage[thumb].x;
+					thumb.y = dictImage[thumb].y;
+					thumb.visible = false;
+					image.visible = true;
+				}
+				
+				var caixa:MovieClip = this["caixa" + String(i)];
+				if (statusAI[caixa.name] != null) {
+					dictCaixa[caixa] = this[statusAI[caixa.name]];
+				}
+			}
+			
+			// Transforma o Object "statusAI.alvosUsados" em um Array
+			var arrayAlvos:Array = String(statusAI.alvosUsados).split(";");
+			for (i = 0; i < arrayAlvos.length; i++) 
+			{
+				alvosUsados.push(this[arrayAlvos[i]]);
+			}
+			
+			movimentos = statusAI.movimentos;
+			acertos = statusAI.acertos;
+			
+			verifyAICompletion();
+		}
+		
 		private function reset(e:MouseEvent):void 
 		{
 			movimentos = acertos = 0;
-			
-			posDict = new Dictionary();
 			
 			feedbackCerto.visible = false;
 			feedbackErrado.visible = false;
@@ -237,9 +302,12 @@
 			}
 			
 			alvosUsados = new Array();
+			
 			for each (var caixa in caixas) caixa.alpha = 1;
 			
 			criaDict();
+			
+			saveAIStatus();
 		}
 		
 		var caixa_origem:DisplayObject = null;
@@ -455,18 +523,25 @@
 			
 			alvo = null;
 			
-			if (movimentos == 9) {
-				finaliza.alpha = 1;
-				finaliza.buttonMode = true;
-				finaliza.addEventListener(MouseEvent.MOUSE_DOWN, finalizaExercicio);
-			}
-				
+			verifyAICompletion();
+			
 			for each (var caixa in caixas) {
 				if (alvosUsados.indexOf(caixa) != -1) caixa.alpha = 0;
 				else caixa.alpha = 1;
 			}
 			
 			caixa_origem = null;
+			
+			saveAIStatus();
+		}
+		
+		private function verifyAICompletion():void
+		{
+			if (movimentos == 9) {
+				finaliza.alpha = 1;
+				finaliza.buttonMode = true;
+				finaliza.addEventListener(MouseEvent.MOUSE_DOWN, finalizaExercicio);
+			}
 		}
 		
 		private function finalizaExercicio(e:Event = null):void
@@ -545,6 +620,7 @@
 		private var mementoSerialized:String = "";
 		private var caixas:Array;
 		private var textDict:Dictionary;
+		private var statusAI:Object;
 		
 		/**
 		 * @private
@@ -564,7 +640,7 @@
 			if (connected) {
 				// Verifica se a AI já foi concluída.
 				var status:String = scorm.get("cmi.completion_status");	
-				//mementoSerialized = String(scorm.get("cmi.suspend_data"));
+				mementoSerialized = String(scorm.get("cmi.suspend_data"));
 				var stringScore:String = scorm.get("cmi.score.raw");
 			 
 				switch(status)
@@ -610,6 +686,7 @@
 			else
 			{
 				trace("Esta Atividade Interativa não está conectada a um LMS: seu aproveitamento nela NÃO será salvo.");
+				mementoSerialized = ExternalInterface.call("getLocalStorageString");
 			}
 			
 			//reset();
@@ -646,6 +723,8 @@
 					//setMessage("Falha na conexão com o LMS.");
 					connected = false;
 				}
+			}else { //LocalStorage
+				ExternalInterface.call("save2LS", mementoSerialized);
 			}
 		}
 		
@@ -659,13 +738,16 @@
 			commit();
 		}
 		
-		/*private function saveStatus():void
+		private function saveStatus():void
 		{
-			if(ExternalInterface.available){
-				//mementoSerialized = marshalObjects();
-				//scorm.set("cmi.suspend_data", mementoSerialized);
+			if (ExternalInterface.available) {
+				if (connected) {
+					scorm.set("cmi.suspend_data", mementoSerialized);
+				}else {//LocalStorage
+					ExternalInterface.call("save2LS", mementoSerialized);
+				}
 			}
-		}*/
+		}
 	}
 
 }
