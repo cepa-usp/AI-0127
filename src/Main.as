@@ -69,17 +69,24 @@
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, function (e:KeyboardEvent) { if (KeyboardEvent(e).keyCode == Keyboard.ESCAPE) infoScreen.visible = false;} );
 			menu.creditosBtn.addEventListener(MouseEvent.CLICK, function () { aboutScreen.visible = true; setChildIndex(aboutScreen, numChildren - 1); } );
 			aboutScreen.addEventListener(MouseEvent.CLICK, function () { aboutScreen.visible = false; } );
+			
+			makeoverOut(feedbackCerto.botaoOK);
+			makeoverOut(feedbackErrado.botaoOK);
+			makeoverOut(menu.instructionsBtn);
+			makeoverOut(menu.creditosBtn);
+			makeoverOut(menu.resetBtn);
+
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, function (e:KeyboardEvent) { if (KeyboardEvent(e).keyCode == Keyboard.ESCAPE) aboutScreen.visible = false;} );
 			
 			menu.instructionsBtn.buttonMode = true;
 			menu.resetBtn.buttonMode = true;
 			menu.creditosBtn.buttonMode = true;
 			
-			var ttinfo:ToolTip = new ToolTip(menu.instructionsBtn, "Orientações", 0.5, 0.5);
+			var ttinfo:ToolTip = new ToolTip(menu.instructionsBtn, "Orientações", 11, 0.8, 200, 0.6, 0.1);
 			addChild(ttinfo);
-			var ttreset:ToolTip = new ToolTip(menu.resetBtn, "Nova tentativa", 0.5, 0.5);
+			var ttreset:ToolTip = new ToolTip(menu.resetBtn, "Nova tentativa", 11, 0.8, 200, 0.6, 0.1);
 			addChild(ttreset);
-			var ttcc:ToolTip = new ToolTip(menu.creditosBtn, "Créditos", 0.5, 0.5);
+			var ttcc:ToolTip = new ToolTip(menu.creditosBtn, "Créditos", 11, 0.8, 200, 0.6, 0.1);
 			addChild(ttcc);
 			
 			/*var ttThumbnail1:ToolTip = new ToolTip(thumbnail1, "ToolTip", 0.5, 0.5);
@@ -133,6 +140,8 @@
 			for (var i:int = 1; i <= 9; i++ ) {
 				this["thumbnail" + String(i)].addEventListener(MouseEvent.MOUSE_DOWN, drag);
 				this["imagem" + String(i)].addEventListener(MouseEvent.MOUSE_DOWN, drag);
+				this["thumbnail" + String(i)].buttonMode = true;
+				this["imagem" + String(i)].buttonMode = true;
 				imagePositions[i] = new Point(this["thumbnail" + String(i)].x, this["thumbnail" + String(i)].y);
 				images[i] = this["thumbnail" + String(i)];
 			}
@@ -148,6 +157,25 @@
 					if(mementoSerialized != "" && mementoSerialized != "null") restoreAIStatus(null);
 				}
 			}
+		}
+		
+		private function makeoverOut(btn:MovieClip):void
+		{
+			btn.mouseChildren = false;
+			btn.addEventListener(MouseEvent.MOUSE_OVER, over);
+			btn.addEventListener(MouseEvent.MOUSE_OUT, out);
+		}
+		
+		private function over(e:MouseEvent):void
+		{
+			var btn:MovieClip = MovieClip(e.target);
+			btn.gotoAndStop(2);
+		}
+		
+		private function out(e:MouseEvent):void
+		{
+			var btn:MovieClip = MovieClip(e.target);
+			btn.gotoAndStop(1);
 		}
 		
 		function criaDict() :void {
@@ -537,7 +565,7 @@
 		
 		private function verifyAICompletion():void
 		{
-			if (movimentos == 9) {
+			if (movimentos == 9 && !completed) {
 				finaliza.alpha = 1;
 				finaliza.buttonMode = true;
 				finaliza.addEventListener(MouseEvent.MOUSE_DOWN, finalizaExercicio);
@@ -571,6 +599,7 @@
 			
 			finaliza.alpha = 0.5;
 			finaliza.buttonMode = false;
+			finaliza.removeEventListener(MouseEvent.MOUSE_DOWN, finalizaExercicio);
 		}
 		
 		private function onMouseMove(e:MouseEvent):void 
