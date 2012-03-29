@@ -609,9 +609,9 @@
 				commit();
 			}
 			
-			finaliza.alpha = 0.5;
-			finaliza.buttonMode = false;
-			finaliza.removeEventListener(MouseEvent.MOUSE_DOWN, finalizaExercicio);
+			//finaliza.alpha = 0.5;
+			//finaliza.buttonMode = false;
+			//finaliza.removeEventListener(MouseEvent.MOUSE_DOWN, finalizaExercicio);
 		}
 		
 		private function onMouseMove(e:MouseEvent):void 
