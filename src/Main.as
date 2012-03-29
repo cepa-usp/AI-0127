@@ -88,6 +88,16 @@
 			addChild(ttreset);
 			var ttcc:ToolTip = new ToolTip(menu.creditosBtn, "Créditos", 11, 0.8, 200, 0.6, 0.1);
 			addChild(ttcc);
+			var ttThumb2:ToolTip = new ToolTip(thumbnail2, "Euglenozoa\nclorofila a, clorofila b", 11, 0.8, 200, 0.6, 0.1);
+			addChild(ttThumb2);
+			var ttThumb6:ToolTip = new ToolTip(thumbnail6, "Estramenólia\nclorofila a, clorofila c, Fu", 11, 0.8, 200, 0.6, 0.1);
+			addChild(ttThumb6);
+			var ttThumb7:ToolTip = new ToolTip(thumbnail7, "Ciliados", 11, 0.8, 200, 0.6, 0.1);
+			addChild(ttThumb7);
+			var ttThumb8:ToolTip = new ToolTip(thumbnail8, "Apicomplexos", 11, 0.8, 200, 0.6, 0.1);
+			addChild(ttThumb8);
+			var ttThumb9:ToolTip = new ToolTip(thumbnail9, "Dinoflagelados\nclorofila a, clorofila c, Pe", 11, 0.8, 200, 0.6, 0.1);
+			addChild(ttThumb9);
 			
 			/*var ttThumbnail1:ToolTip = new ToolTip(thumbnail1, "ToolTip", 0.5, 0.5);
 			addChild(ttThumbnail1);
@@ -565,7 +575,9 @@
 		
 		private function verifyAICompletion():void
 		{
-			if (movimentos == 7 && !completed) {
+			trace("movimentos: " + movimentos);
+			
+			if (movimentos == 7) {
 				finaliza.alpha = 1;
 				finaliza.buttonMode = true;
 				finaliza.addEventListener(MouseEvent.MOUSE_DOWN, finalizaExercicio);
