@@ -146,7 +146,7 @@
 				images[i] = this["thumbnail" + String(i)];
 			}
 			
-			for (i = 1; i <= 7; i++ ) this["texto" + String(i)].visible = false;
+			//for (i = 1; i <= 7; i++ ) this["texto" + String(i)].visible = false;
 			box1.visible = false;
 			
 			criaDict();
@@ -214,7 +214,7 @@
 			imageDict[imagem8] = thumbnail8;
 			imageDict[imagem9] = thumbnail9;
 			
-			textDict = new Dictionary();
+/*			textDict = new Dictionary();
 			textDict[caixa2] = texto1;
 			textDict[caixa4] = texto2;
 			textDict[caixa5] = texto3;
@@ -222,7 +222,7 @@
 			textDict[caixa7] = texto5;
 			textDict[caixa8] = texto6;
 			textDict[caixa9] = texto7;
-			
+*/			
 			dictImage = new Dictionary();
 			dictCaixa = new Dictionary();
 			
@@ -314,10 +314,10 @@
 			finaliza.alpha = 0.5;
 			finaliza.buttonMode = false;
 			
-			for (var i:int = 1; i <= 7; i++) this["texto" + String(i)].visible = false;
-			box1.visible = texto5.visible;
+			//for (var i:int = 1; i <= 7; i++) this["texto" + String(i)].visible = false;
+			//box1.visible = texto5.visible;
 			
-			for (i = 1; i <= 9; i++) {
+			for (var i:int = 1; i <= 9; i++) {
 				this["thumbnail" + String(i)].removeEventListener(MouseEvent.MOUSE_DOWN, drag);
 				this["imagem" + String(i)].removeEventListener(MouseEvent.MOUSE_DOWN, drag);
 				this["thumbnail" + String(i)].addEventListener(MouseEvent.MOUSE_DOWN, drag);
@@ -565,7 +565,7 @@
 		
 		private function verifyAICompletion():void
 		{
-			if (movimentos == 9 && !completed) {
+			if (movimentos == 7 && !completed) {
 				finaliza.alpha = 1;
 				finaliza.buttonMode = true;
 				finaliza.addEventListener(MouseEvent.MOUSE_DOWN, finalizaExercicio);
@@ -575,24 +575,24 @@
 		private function finalizaExercicio(e:Event = null):void
 		{
 			acertos = 0;
-			for (var i:int = 1; i <= 7; i++) this["texto" + String(i)].visible = false;
-			for (i = 1; i <= 9; i++) if (dictCaixa[this["caixa" + String(i)]] == this["thumbnail" + String(i)]) {
+			//for (var i:int = 1; i <= 7; i++) this["texto" + String(i)].visible = false;
+			for (var i:int = 1; i <= 9; i++) if (dictCaixa[this["caixa" + String(i)]] == this["thumbnail" + String(i)]) {
 				acertos++;
-				if (textDict[this["caixa" + String(i)]] != null) textDict[this["caixa" + String(i)]].visible = true;
+				//if (textDict[this["caixa" + String(i)]] != null) textDict[this["caixa" + String(i)]].visible = true;
 			}
 			
-			box1.visible = texto5.visible;
+			//box1.visible = texto5.visible;
 			
 			trace("Terminou. " + String(acertos) + " acertos.");
 			
-			if (acertos == 9) feedbackCerto.visible = true;
+			if (acertos == 7) feedbackCerto.visible = true;
 			else feedbackErrado.visible = true;
 			
 			setChildIndex(feedbackCerto, numChildren - 1);
 			setChildIndex(feedbackErrado, numChildren - 1);
 			
 			if(!completed){
-				score = Math.floor((100 / 9) * acertos);
+				score = Math.floor((100 / 7) * acertos);
 				completed = true;
 				commit();
 			}
