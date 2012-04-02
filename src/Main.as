@@ -60,7 +60,7 @@
 		private function init(e:Event = null):void 
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, init);
-			this.scrollRect = new Rectangle(0, 0, 700, 777);
+			this.scrollRect = new Rectangle(0, 0, 623, 777);
 			menu.resetBtn.addEventListener(MouseEvent.CLICK, reset);
 			feedbackCerto.botaoOK.addEventListener(MouseEvent.CLICK, function () { feedbackCerto.visible = false; } );
 			feedbackErrado.botaoOK.addEventListener(MouseEvent.CLICK, function () { feedbackErrado.visible = false; } );
