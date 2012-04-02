@@ -1,8 +1,17 @@
-Copying from /d/Projetos/05 - GitHub/AI-0127 to cepa@arquivos.atp.usp.br:/work/PUBLICACAO/atividades-interativas/AI-0127
+Copying from /c/Users/Luciano Lucena/Documents/PROJETOS/UNIVESP/GitHub/AI-0127 to cepa@arquivos.atp.usp.br:/work/PUBLICACAO/atividades-interativas/AI-0127
 building file list ... done
 ./
 AI-0127_SCO.zip
+imsmanifest.xml
+index.html
+js/
 js/ai.js
+js/jquery-1.4.2.min.js
+js/scorm_wrapper.min.js
+js/swfobject.js
+swf/
+swf/AI-0127.swf
+swf/AI_Loader.swf
 
-sent 34822 bytes  received 1715 bytes  73074.00 bytes/sec
-total size is 447245  speedup is 12.24
+sent 313452 bytes  received 4056 bytes  211672.00 bytes/sec
+total size is 456317  speedup is 1.44
